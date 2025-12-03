@@ -32,22 +32,22 @@ solvePart1 = fmap (countZeros . lines) . readFile
 
 -------------------------------------------------------------------------------
 
+rotAmount :: Rotation -> Int
+rotAmount (R n) = n
+rotAmount (L n) = n
+
+distToZero :: Rotation -> Int -> Int
+distToZero (R _) pos = (100 - pos) `mod` 100
+distToZero (L _) pos = pos `mod` 100
+
 zeros :: (Int, Int) -> Rotation -> (Int, Int)
 zeros (count, pos) rot =
-  case rot of
-    R n ->
-      let distToZero = (100 - pos) `mod` 100
-          nextZero   = if distToZero == 0 then 100 else distToZero
-          zeroHits   = if nextZero > n then 0 else 1 + (n - nextZero) `div` 100
-          pos'       = turn pos rot
-      in (count + zeroHits, pos')
-
-    L n ->
-      let distToZero = pos `mod` 100
-          nextZero   = if distToZero == 0 then 100 else distToZero
-          zeroHits   = if nextZero > n then 0 else 1 + (n - nextZero) `div` 100
-          pos'       = turn pos rot
-      in (count + zeroHits, pos')
+  let n         = rotAmount rot
+      d         = distToZero rot pos
+      nextZero  = if d == 0 then 100 else d
+      zeroHits  = if nextZero > n then 0 else 1 + (n - nextZero) `div` 100
+      pos'      = turn pos rot
+  in (count + zeroHits, pos')
 
 solvePart2 :: FilePath -> IO Int
 solvePart2 =
