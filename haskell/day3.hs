@@ -1,0 +1,47 @@
+module Day3 where
+
+import Data.Char (digitToInt)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+
+largestJoltage :: T.Text -> Int
+largestJoltage = snd . T.foldl' step (-1, 0)
+  where
+    step (greatestDigit, greatestNumber) c =
+        let digit      = digitToInt c
+            bestNumber =
+                if greatestDigit >= 0
+                then max greatestNumber (greatestDigit * 10 + digit)
+                else greatestNumber
+            bestDigit = max greatestDigit digit
+        in (bestDigit, bestNumber)
+
+solvePart1 :: FilePath -> IO Int
+solvePart1 =
+    fmap (sum . map largestJoltage . T.lines)
+        . TIO.readFile
+
+--------------------------------------------------------------------
+
+largestJoltage12 :: T.Text -> Int
+largestJoltage12 bank =
+  let digits      = map digitToInt (T.unpack bank)
+      removeCount = length digits - 12
+      result      = go removeCount [] digits
+  in read (concatMap show (take 12 result))
+  where
+    go :: Int -> [Int] -> [Int] -> [Int]
+    go r stack [] = stack
+    go r stack (x:xs)
+      | r > 0
+      , not (null stack)
+      , last stack < x
+      = go (r - 1) (init stack) (x:xs)
+      | otherwise
+      = go r (stack ++ [x]) xs
+
+
+solvePart2 :: FilePath -> IO Int
+solvePart2 =
+    fmap (sum . map largestJoltage12 . T.lines)
+        . TIO.readFile
