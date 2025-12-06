@@ -25,12 +25,12 @@ solvePart1 =
 
 largestJoltage12 :: T.Text -> Int
 largestJoltage12 bank =
-  let digits      = map digitToInt (T.unpack bank)
+  let digits      = T.unpack bank
       removeCount = length digits - 12
       result      = go removeCount [] digits
-  in read (concatMap show (take 12 result))
+  in read (take 12 result)
   where
-    go :: Int -> [Int] -> [Int] -> [Int]
+    go :: Int -> String -> String -> String
     go r stack [] = stack
     go r stack (x:xs)
       | r > 0
