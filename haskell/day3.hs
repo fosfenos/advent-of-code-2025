@@ -22,13 +22,12 @@ solvePart1 =
         . TIO.readFile
 
 ---------------------------------------------------------------------
-
 largestJoltage12 :: T.Text -> Int
 largestJoltage12 bank =
   let digits      = T.unpack bank
       removeCount = length digits - 12
       result      = go removeCount [] digits
-  in read (take 12 (reverse result))
+  in read . take 12 . reverse $ result
   where
     go :: Int -> String -> String -> String
     go r stack [] = stack
@@ -39,8 +38,7 @@ largestJoltage12 bank =
       = go (r - 1) (tail stack) (x:xs)
       | otherwise
       = go r (x : stack) xs
-
-
+      
 solvePart2 :: FilePath -> IO Int
 solvePart2 =
     fmap (sum . map largestJoltage12 . T.lines)
